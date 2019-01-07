@@ -43,16 +43,12 @@ def welcome():
         "/api/v1.0/precipitation<br/><br/>"
         "/api/v1.0/stations<br/><br/>"
     )
-
-begin_date = dt.date(2017, 8, 23) - dt.timedelta(days=365)
+ 
 @app.route("/api/v1.0/precipitation")
 def precipitation():
-    # Calculate the date 1 year ago from the last data point in the database
     last_entry = session.query(Measurement.date).order_by(Measurement.date.desc()).first()
     year_from_last = dt.date(2017, 8, 23) - dt.timedelta(days=365)
-
     results = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date > year_from_last).order_by(Measurement.date).all()
-	
     precip = []
     for p in results:
         prcp_data = {}
@@ -65,7 +61,7 @@ def precipitation():
 @app.route("/api/v1.0/stations")
 def stations():
 	results = session.query(Station).all()
-	all_stations = []
+	all = []
 	for station in results:
 		station_data = {}
 		station_data["station"] = station.station
@@ -73,9 +69,9 @@ def stations():
 		station_data["latitude"] = station.latitude
 		station_data["longitude"] = station.longitude
 		station_data["elevation"] = station.elevation
-		all_stations.append(station_data)
+		all.append(station_data)
 		
-	return jsonify(all_stations)
+	return jsonify(all)
 
 if __name__ == '__main__':
     app.run(debug=True)
